@@ -345,7 +345,8 @@ type StellarFormation with
                     // REVERTME: Temporarily disable abnormal-event checking
                     // self.CheckNoAbnormalKubeEvents p
                     p.CheckNoErrorMetrics(includeTxInternalErrors = false)
-                    p.CheckConsistencyWith peer)
+                    if p <> peer then  // Don't compare peer with itself
+                        p.CheckConsistencyWith peer)
 
     member self.CheckUsesLatestProtocolVersion() = self.NetworkCfg.EachPeer(fun p -> p.CheckUsesLatestProtocolVersion())
 

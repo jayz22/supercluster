@@ -185,6 +185,11 @@ let doCatchupForVersion
     for set in catchupSets.deferredSetList do
         formation.Start set.name
         let peer = formation.NetworkCfg.GetPeer set 0
+        // Wait for the node to fully sync before checking ledger progress.
+        // WaitForFewLedgers alone is insufficient for catching-up nodes because
+        // GetLedgerNum() returns the last applied ledger (which can be low, e.g., 6)
+        // while the node is still in "Catching up" or "Joining SCP" state.
+        peer.WaitUntilSynced()
         peer.WaitForFewLedgers(5)
 
 let doCatchup (context: MissionContext) (formation: StellarFormation) (catchupSets: CatchupSets) =
